@@ -10,6 +10,7 @@ import {
   Lock,
   PlayCircle
 } from 'lucide-react'
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react'
 
 interface ModulePageProps {
   params: Promise<{
@@ -59,7 +60,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
     .eq('user_id', user.id)
 
   // Сортируем уроки по порядку
-  const sortedLessons = module.lessons?.sort((a, b) => a.order - b.order) || []
+  const sortedLessons = module.lessons?.sort((a: { order: number }, b: { order: number }) => a.order - b.order) || []
 
   // Считаем статистику
   const totalLessons = sortedLessons.length
@@ -67,7 +68,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
   const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   // Находим следующий урок для продолжения
-  const nextLesson = sortedLessons.find(lesson => 
+  const nextLesson = sortedLessons.find((lesson: { id: any }) => 
     !userProgress?.some(up => up.lesson_id === lesson.id && up.completed)
   )
 
@@ -174,7 +175,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
         </div>
 
         <div className="divide-y">
-          {sortedLessons.map((lesson, index: number) => {
+          {sortedLessons.map((lesson: { id: Key | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; content: string; exercise: any }, index: number) => {
             const isCompleted = userProgress?.some(
               up => up.lesson_id === lesson.id && up.completed
             )

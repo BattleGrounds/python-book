@@ -71,9 +71,9 @@ export default async function AdminUsersPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {users?.map((user) => {
-                const completedLessons = user.user_progress?.filter(up => up.completed).length || 0
+                const completedLessons = user.user_progress?.filter((up: { completed: any }) => up.completed).length || 0
                 const totalSubmissions = user.submissions?.length || 0
-                const passedSubmissions = user.submissions?.filter(s => s.passed).length || 0
+                const passedSubmissions = user.submissions?.filter((s: { passed: any }) => s.passed).length || 0
 
                 return (
                   <tr key={user.id} className="hover:bg-gray-50">

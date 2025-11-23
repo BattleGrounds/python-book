@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { BookOpen, Edit3, Lock } from 'lucide-react'
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react'
 
 export default async function ModulesPage() {
   const supabase = await createClient()
@@ -55,7 +56,7 @@ export default async function ModulesPage() {
                 
                 {/* Lessons list */}
                 <div className="space-y-2">
-                  {module.lessons?.map((lesson) => {
+                  {module.lessons?.map((lesson: { id: Key | null | undefined; order: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined }) => {
                     const isCompleted = userProgress?.some(
                       up => up.lesson_id === lesson.id && up.completed
                     )

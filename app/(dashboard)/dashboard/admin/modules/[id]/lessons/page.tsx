@@ -9,6 +9,7 @@ import {
   Eye
 } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from 'react'
 
 interface ModuleLessonsPageProps {
   params: Promise<{
@@ -64,7 +65,7 @@ export default async function ModuleLessonsPage({ params }: ModuleLessonsPagePro
   }
 
   // Сортируем уроки по порядку
-  const sortedLessons = module.lessons?.sort((a, b) => a.order - b.order) || []
+  const sortedLessons = module.lessons?.sort((a: { order: number }, b: { order: number }) => a.order - b.order) || []
 
   return (
     <div className="space-y-6">
@@ -96,7 +97,7 @@ export default async function ModuleLessonsPage({ params }: ModuleLessonsPagePro
 
       {/* Lessons List */}
       <div className="rounded-lg border bg-white">
-        {sortedLessons.map((lesson) => (
+        {sortedLessons.map((lesson: { id: Key | null | undefined; order: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; content: string; created_at: string | number | Date; exercise: any; solution: any }) => (
           <div key={lesson.id} className="border-b last:border-b-0">
             <div className="flex items-center justify-between p-6">
               <div className="flex items-start gap-4 flex-1">
