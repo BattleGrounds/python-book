@@ -73,53 +73,54 @@ export default async function ModulePage({ params }: ModulePageProps) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-2 sm:gap-4">
         <Link
           href="/dashboard/modules"
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+          aria-label="Назад к модулям"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
         </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <BookOpen className="h-4 w-4" />
-            <span>Learning Module</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-2">
+            <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Обучающий модуль</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">{module.title}</h1>
-          <p className="text-gray-600 mt-2">{module.description}</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 break-words">{module.title}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">{module.description}</p>
         </div>
       </div>
 
       {/* Progress Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border bg-white p-6">
-          <div className="flex items-center gap-3">
-            <BookOpen className="h-8 w-8 text-blue-600" />
-            <div>
-              <p className="text-2xl font-bold">{totalLessons}</p>
-              <p className="text-sm text-gray-600">Total Lessons</p>
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+        <div className="rounded-lg border bg-white p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold">{totalLessons}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Всего уроков</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div>
-              <p className="text-2xl font-bold">{completedLessons}</p>
-              <p className="text-sm text-gray-600">Completed</p>
+        <div className="rounded-lg border bg-white p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold">{completedLessons}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Завершено</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6">
-          <div className="flex items-center gap-3">
-            <Clock className="h-8 w-8 text-purple-600" />
-            <div>
-              <p className="text-2xl font-bold">{progressPercentage}%</p>
-              <p className="text-sm text-gray-600">Progress</p>
+        <div className="rounded-lg border bg-white p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xl sm:text-2xl font-bold">{progressPercentage}%</p>
+              <p className="text-xs sm:text-sm text-gray-600">Прогресс</p>
             </div>
           </div>
         </div>
@@ -127,14 +128,14 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
       {/* Progress Bar */}
       {totalLessons > 0 && (
-        <div className="rounded-lg border bg-white p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Module Progress</span>
-            <span className="text-sm text-gray-600">{completedLessons}/{totalLessons} lessons</span>
+        <div className="rounded-lg border bg-white p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <span className="text-xs sm:text-sm font-medium text-gray-700">Прогресс модуля</span>
+            <span className="text-xs sm:text-sm text-gray-600">{completedLessons}/{totalLessons} уроков</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3">
             <div 
-              className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-2 sm:h-3 rounded-full transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -143,23 +144,23 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
       {/* Continue Learning Card */}
       {nextLesson && (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-blue-900">Continue Learning</h3>
-              <p className="text-blue-700 mt-1">
-                Next up: {nextLesson.title}
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base sm:text-lg font-semibold text-blue-900">Продолжить обучение</h3>
+              <p className="text-sm sm:text-base text-blue-700 mt-1 break-words">
+                Следующий: {nextLesson.title}
               </p>
-              <p className="text-blue-600 text-sm mt-2">
+              <p className="text-xs sm:text-sm text-blue-600 mt-2 line-clamp-2">
                 {nextLesson.content.substring(0, 100)}...
               </p>
             </div>
             <Link
               href={`/dashboard/modules/${moduleId}/lessons/${nextLesson.id}`}
-              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base whitespace-nowrap w-full sm:w-auto justify-center"
             >
-              <PlayCircle className="h-5 w-5" />
-              Continue
+              <PlayCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+              Продолжить
             </Link>
           </div>
         </div>
@@ -167,10 +168,10 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
       {/* Lessons List */}
       <div className="rounded-lg border bg-white">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">Lessons</h2>
-          <p className="text-gray-600 mt-1">
-            Complete all lessons to finish this module
+        <div className="p-4 sm:p-6 border-b">
+          <h2 className="text-lg sm:text-xl font-bold">Уроки</h2>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">
+            Пройдите все уроки, чтобы завершить этот модуль
           </p>
         </div>
 
@@ -182,8 +183,8 @@ export default async function ModulePage({ params }: ModulePageProps) {
             const isNextLesson = nextLesson?.id === lesson.id
             
             return (
-              <div key={lesson.id} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex items-start gap-4">
+              <div key={lesson.id} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors">
+                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                   {/* Lesson Number */}
                   <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                     isCompleted 
@@ -200,40 +201,40 @@ export default async function ModulePage({ params }: ModulePageProps) {
                   </div>
 
                   {/* Lesson Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                  <div className="flex-1 min-w-0 w-full sm:w-auto">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                         {lesson.title}
                       </h3>
                       {isCompleted && (
-                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                          Completed
+                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full whitespace-nowrap">
+                          Завершено
                         </span>
                       )}
                       {isNextLesson && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                          Next Lesson
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap">
+                          Следующий урок
                         </span>
                       )}
                     </div>
                     
-                    <p className="text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">
                       {lesson.content.substring(0, 150)}...
                     </p>
 
                     {lesson.exercise && (
-                      <div className="flex items-center gap-2 text-sm text-blue-600">
-                        <PlayCircle className="h-4 w-4" />
-                        <span>Includes coding exercise</span>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-blue-600">
+                        <PlayCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Содержит задание по программированию</span>
                       </div>
                     )}
                   </div>
 
                   {/* Action Button */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 w-full sm:w-auto">
                     <Link
                       href={`/dashboard/modules/${moduleId}/lessons/${lesson.id}`}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto ${
                         isCompleted
                           ? 'bg-green-600 text-white hover:bg-green-700'
                           : isNextLesson
@@ -241,7 +242,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
                           : 'bg-gray-600 text-white hover:bg-gray-700'
                       }`}
                     >
-                      {isCompleted ? 'Review' : isNextLesson ? 'Continue' : 'Start'}
+                      {isCompleted ? 'Повторить' : isNextLesson ? 'Продолжить' : 'Начать'}
                       <PlayCircle className="h-4 w-4" />
                     </Link>
                   </div>
@@ -253,13 +254,13 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
         {/* Empty State */}
         {sortedLessons.length === 0 && (
-          <div className="text-center py-12">
-            <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No lessons yet
+          <div className="text-center py-8 sm:py-12">
+            <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-gray-300 mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+              Уроков пока нет
             </h3>
-            <p className="text-gray-600 mb-4">
-              This module doesn't have any lessons yet.
+            <p className="text-sm sm:text-base text-gray-600 mb-4">
+              В этом модуле пока нет уроков.
             </p>
           </div>
         )}
@@ -267,28 +268,28 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
       {/* Module Completion */}
       {completedLessons === totalLessons && totalLessons > 0 && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-6">
-          <div className="flex items-center gap-4">
-            <CheckCircle className="h-12 w-12 text-green-600" />
-            <div>
-              <h3 className="text-xl font-semibold text-green-900">
-                Module Completed! 🎉
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <CheckCircle className="h-10 w-10 sm:h-12 sm:w-12 text-green-600 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="text-lg sm:text-xl font-semibold text-green-900">
+                Модуль завершён! 🎉
               </h3>
-              <p className="text-green-700 mt-1">
-                You've successfully completed all lessons in this module.
+              <p className="text-sm sm:text-base text-green-700 mt-1">
+                Вы успешно завершили все уроки в этом модуле.
               </p>
-              <div className="flex gap-3 mt-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
                 <Link
                   href="/dashboard/modules"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-center text-sm sm:text-base"
                 >
-                  Browse More Modules
+                  Найти ещё модули
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-colors"
+                  className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-colors text-center text-sm sm:text-base"
                 >
-                  Back to Dashboard
+                  Назад к дашборду
                 </Link>
               </div>
             </div>

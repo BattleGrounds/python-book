@@ -76,10 +76,10 @@ export default async function DashboardLayout({
       <div className="hidden w-64 border-r bg-gray-50 md:block">
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="border-b p-6">
-            <h1 className="text-xl font-bold">Python Platform</h1>
-            <p className="text-sm text-gray-600">
-              {displayProfile.role === 'admin' ? 'Admin' : 'Student'} Dashboard
+          <div className="border-b p-4 sm:p-6">
+            <h1 className="text-lg sm:text-xl font-bold">Python Platform</h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">
+              {displayProfile.role === 'admin' ? 'Админ' : 'Студент'} Панель
             </p>
           </div>
           
@@ -92,7 +92,7 @@ export default async function DashboardLayout({
           <div className="border-t p-4">
             <div className="mb-4">
               <p className="text-sm font-medium">{displayProfile.name || user.email}</p>
-              <p className="text-xs text-gray-600">{user.email}</p>
+              <p className="text-xs text-gray-600 truncate">{user.email}</p>
             </div>
             <SignOutButton />
           </div>
@@ -100,17 +100,17 @@ export default async function DashboardLayout({
       </div>
 
       {/* Main content */}
-      <div className="flex-1">
+      <div className="flex-1 w-full min-w-0">
         {/* Mobile header */}
-        <div className="border-b bg-white p-4 md:hidden">
+        <div className="border-b bg-white p-3 sm:p-4 md:hidden">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold">Python Platform</h1>
+            <h1 className="text-base sm:text-lg font-bold">Python Platform</h1>
             <DashboardNav role={displayProfile.role} mobile />
           </div>
         </div>
         
         {/* Page content */}
-        <main className="p-6">
+        <main className="p-3 sm:p-4 md:p-6">
           {children}
         </main>
       </div>

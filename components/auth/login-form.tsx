@@ -30,7 +30,7 @@ export function LoginForm() {
         router.push('/dashboard')
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError('Произошла неожиданная ошибка')
     } finally {
       setLoading(false)
     }
@@ -48,14 +48,14 @@ export function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-          placeholder="Enter your email"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:text-base"
+          placeholder="Введите ваш email"
         />
       </div>
 
       <div>
         <label htmlFor="password" className="block text-sm font-medium">
-          Password
+          Пароль
         </label>
         <input
           id="password"
@@ -63,8 +63,8 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-          placeholder="Enter your password"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:text-base"
+          placeholder="Введите ваш пароль"
         />
       </div>
 
@@ -75,9 +75,9 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white disabled:opacity-50 text-sm sm:text-base hover:bg-blue-700 transition-colors"
       >
-        {loading ? 'Signing in...' : 'Sign in'}
+        {loading ? 'Вход...' : 'Войти'}
       </button>
     </form>
   )

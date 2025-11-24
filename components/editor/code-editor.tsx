@@ -10,7 +10,7 @@ const Editor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-full bg-gray-900">
-      <div className="text-white">Loading Editor...</div>
+      <div className="text-white">Загрузка редактора...</div>
     </div>
   )
 })
@@ -23,25 +23,25 @@ interface CodeEditorProps {
   readOnly?: boolean
 }
 
-const DEFAULT_CODE = `# Welcome to Python Editor!
-# Write your Python code here and click Run
+const DEFAULT_CODE = `# Добро пожаловать в редактор Python!
+# Напишите свой код Python здесь и нажмите Запустить
 
-print("Hello, World!")
+print("Привет, мир!")
 
-# Simple calculations
+# Простые вычисления
 result = 2 + 3 * 4
 print(f"2 + 3 * 4 = {result}")
 
-# Lists and loops
-fruits = ["apple", "banana", "cherry"]
+# Списки и циклы
+fruits = ["яблоко", "банан", "вишня"]
 for fruit in fruits:
-    print(f"I like {fruit}")
+    print(f"Мне нравится {fruit}")
 
-# Functions
+# Функции
 def greet(name):
-    return f"Hello, {name}!"
+    return f"Привет, {name}!"
 
-print(greet("Python Learner"))`
+print(greet("Изучающий Python"))`
 
 export default function CodeEditor({ 
   initialCode = DEFAULT_CODE, 
@@ -170,35 +170,35 @@ export default function CodeEditor({
 
   // Определяем содержимое консоли вывода
   const consoleContent = error 
-    ? `Error: ${error}`
+    ? `Ошибка: ${error}`
     : output 
     ? output 
-    : "Run your code to see output here..."
+    : "Запустите код, чтобы увидеть вывод здесь..."
 
   return (
     <div className="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
-        <div className="flex items-center gap-2">
-          <h3 className="text-white font-semibold">
-            {lesson?.title || 'Python Editor'}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-2 sm:p-4 bg-gray-800 border-b border-gray-700">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="text-white font-semibold text-sm sm:text-base">
+            {lesson?.title || 'Редактор Python'}
           </h3>
           {loading && (
-            <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded">
-              Loading Pyodide...
+            <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded whitespace-nowrap">
+              Загрузка Pyodide...
             </span>
           )}
           {error && (
-            <span className="px-2 py-1 bg-red-500 text-white text-xs rounded">
-              Load Error
+            <span className="px-2 py-1 bg-red-500 text-white text-xs rounded whitespace-nowrap">
+              Ошибка загрузки
             </span>
           )}
         </div>
         
-        <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 cursor-pointer text-sm">
-            <Upload className="h-4 w-4" />
-            Load
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+          <label className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 cursor-pointer text-xs sm:text-sm">
+            <Upload className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Загрузить</span>
             <input
               type="file"
               accept=".py,.txt"
@@ -210,35 +210,35 @@ export default function CodeEditor({
           <button
             onClick={handleSaveCode}
             disabled={!isEditorReady}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 text-xs sm:text-sm"
           >
-            <Download className="h-4 w-4" />
-            Save
+            <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Сохранить</span>
           </button>
 
           <button
             onClick={handleResetCode}
             disabled={!isEditorReady}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 text-xs sm:text-sm"
           >
-            <RotateCcw className="h-4 w-4" />
-            Reset
+            <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Сброс</span>
           </button>
 
           <button
             onClick={handleRunCode}
             disabled={!isEditorReady || isRunning || loading}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 font-medium"
+            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 font-medium text-xs sm:text-sm"
           >
-            <Play className="h-4 w-4" />
-            {isRunning ? 'Running...' : 'Run'}
+            <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+            {isRunning ? 'Выполняется...' : 'Запустить'}
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
         {/* Code Editor */}
-        <div className="flex-1 min-w-0 border-r border-gray-700">
+        <div className="flex-1 min-w-0 border-b lg:border-b-0 lg:border-r border-gray-700">
           <Editor
             height="100%"
             defaultLanguage="python"
@@ -247,8 +247,8 @@ export default function CodeEditor({
             onMount={handleEditorDidMount}
             theme="vs-dark"
             options={{
-              minimap: { enabled: true },
-              fontSize: 14,
+              minimap: { enabled: false },
+              fontSize: 13,
               lineNumbers: 'on',
               scrollBeyondLastLine: false,
               automaticLayout: true,
@@ -264,12 +264,12 @@ export default function CodeEditor({
 
         {/* Output Panel */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="p-3 bg-gray-800 border-b border-gray-700">
-            <h4 className="text-white font-medium">Output</h4>
+          <div className="p-2 sm:p-3 bg-gray-800 border-b border-gray-700">
+            <h4 className="text-white font-medium text-xs sm:text-sm">Вывод</h4>
           </div>
           
-          <div className="flex-1 p-4 bg-black overflow-auto">
-            <pre className={`font-mono text-sm whitespace-pre-wrap ${
+          <div className="flex-1 p-2 sm:p-4 bg-black overflow-auto">
+            <pre className={`font-mono text-xs sm:text-sm whitespace-pre-wrap ${
               error ? 'text-red-400' : output ? 'text-green-400' : 'text-gray-400'
             }`}>
               {consoleContent}
@@ -278,62 +278,62 @@ export default function CodeEditor({
 
           {/* Stdin Input Area */}
           <div className="border-t border-gray-700 bg-gray-800">
-            <div className="p-3 border-b border-gray-700">
-              <h4 className="text-white font-medium text-sm">Standard Input (stdin)</h4>
+            <div className="p-2 sm:p-3 border-b border-gray-700">
+              <h4 className="text-white font-medium text-xs sm:text-sm">Стандартный ввод (stdin)</h4>
               <p className="text-gray-400 text-xs mt-1">
                 {waitingForInput 
-                  ? 'Code is waiting for input. Enter a value and press Enter.' 
-                  : 'Enter input values (one per line) or leave empty to provide input interactively.'}
+                  ? 'Код ожидает ввода. Введите значение и нажмите Enter.' 
+                  : 'Введите значения (по одному на строку) или оставьте пустым для интерактивного ввода.'}
               </p>
             </div>
             
             {waitingForInput ? (
-              <form onSubmit={handleStdinSubmit} className="p-3 flex gap-2">
+              <form onSubmit={handleStdinSubmit} className="p-2 sm:p-3 flex gap-2">
                 <input
                   ref={stdinInputRef}
                   type="text"
                   value={stdin}
                   onChange={(e) => setStdin(e.target.value)}
                   onKeyDown={handleStdinKeyDown}
-                  placeholder="Enter input value..."
-                  className="flex-1 px-3 py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500"
+                  placeholder="Введите значение..."
+                  className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500 text-xs sm:text-sm"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
                 >
-                  <ArrowRight className="h-4 w-4" />
-                  Send
+                  <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                  Отправить
                 </button>
               </form>
             ) : (
-              <div className="p-3">
+              <div className="p-2 sm:p-3">
                 <textarea
                   value={stdin}
                   onChange={(e) => setStdin(e.target.value)}
-                  placeholder="Enter input values (one per line)&#10;Example:&#10;5&#10;10&#10;hello"
-                  className="w-full px-3 py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500 font-mono text-sm resize-none"
+                  placeholder="Введите значения (по одному на строку)&#10;Пример:&#10;5&#10;10&#10;привет"
+                  className="w-full px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500 font-mono text-xs sm:text-sm resize-none"
                   rows={3}
                 />
                 <p className="text-gray-400 text-xs mt-2">
-                  Each line will be provided as input when your code calls input()
+                  Каждая строка будет передана как ввод, когда ваш код вызовет input()
                 </p>
               </div>
             )}
           </div>
 
           {/* Status Bar */}
-          <div className="px-4 py-2 bg-gray-800 border-t border-gray-700 text-xs text-gray-400 flex justify-between">
+          <div className="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-800 border-t border-gray-700 text-xs text-gray-400 flex flex-col sm:flex-row justify-between gap-1">
             <div>
               {waitingForInput ? (
-                <span className="text-yellow-400">● Waiting for input...</span>
+                <span className="text-yellow-400">● Ожидание ввода...</span>
               ) : isRunning ? (
-                <span className="text-yellow-400">● Running Python code...</span>
+                <span className="text-yellow-400">● Выполнение кода Python...</span>
               ) : loading ? (
-                <span className="text-blue-400">● Loading Pyodide...</span>
+                <span className="text-blue-400">● Загрузка Pyodide...</span>
               ) : (
-                <span>● Ready</span>
+                <span>● Готово</span>
               )}
             </div>
             <div className="text-gray-500">

@@ -40,7 +40,7 @@ export function RegisterForm() {
         router.push('/dashboard')
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError('Произошла неожиданная ошибка')
     } finally {
       setLoading(false)
     }
@@ -50,7 +50,7 @@ export function RegisterForm() {
     <form onSubmit={handleRegister} className="space-y-4">
       <div>
         <label htmlFor="name" className="block text-sm font-medium">
-          Full Name
+          Полное имя
         </label>
         <input
           id="name"
@@ -58,8 +58,8 @@ export function RegisterForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-          placeholder="Enter your full name"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:text-base"
+          placeholder="Введите ваше полное имя"
         />
       </div>
 
@@ -73,14 +73,14 @@ export function RegisterForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-          placeholder="Enter your email"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:text-base"
+          placeholder="Введите ваш email"
         />
       </div>
 
       <div>
         <label htmlFor="password" className="block text-sm font-medium">
-          Password
+          Пароль
         </label>
         <input
           id="password"
@@ -88,8 +88,8 @@ export function RegisterForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-          placeholder="Enter your password"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:text-base"
+          placeholder="Введите ваш пароль"
           minLength={6}
         />
       </div>
@@ -101,9 +101,9 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-green-600 px-4 py-2 text-white disabled:opacity-50"
+        className="w-full rounded-md bg-green-600 px-4 py-2 text-white disabled:opacity-50 text-sm sm:text-base hover:bg-green-700 transition-colors"
       >
-        {loading ? 'Creating account...' : 'Create account'}
+        {loading ? 'Создание аккаунта...' : 'Создать аккаунт'}
       </button>
     </form>
   )

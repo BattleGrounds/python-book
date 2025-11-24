@@ -14,18 +14,18 @@ import {
 import { useState } from 'react'
 
 const studentNavItems = [
-  { href: '/dashboard', label: 'Overview', icon: Home },
-  { href: '/dashboard/modules', label: 'Modules', icon: BookOpen },
-  { href: '/dashboard/practice', label: 'Practice', icon: Code },
-  { href: '/dashboard/profile', label: 'Profile', icon: Settings },
+  { href: '/dashboard', label: 'Обзор', icon: Home },
+  { href: '/dashboard/modules', label: 'Модули', icon: BookOpen },
+  { href: '/dashboard/practice', label: 'Практика', icon: Code },
+  { href: '/dashboard/profile', label: 'Профиль', icon: Settings },
 ]
 
 const adminNavItems = [
-  { href: '/dashboard', label: 'Overview', icon: Home },
-  { href: '/dashboard/modules', label: 'Modules', icon: BookOpen },
-  { href: '/dashboard/admin', label: 'Admin Panel', icon: BarChart3 },
-  { href: '/dashboard/users', label: 'Users', icon: Users },
-  { href: '/dashboard/profile', label: 'Profile', icon: Settings },
+  { href: '/dashboard', label: 'Обзор', icon: Home },
+  { href: '/dashboard/modules', label: 'Модули', icon: BookOpen },
+  { href: '/dashboard/admin', label: 'Админ-панель', icon: BarChart3 },
+  { href: '/dashboard/users', label: 'Пользователи', icon: Users },
+  { href: '/dashboard/profile', label: 'Профиль', icon: Settings },
 ]
 
 interface DashboardNavProps {
@@ -66,20 +66,27 @@ export function DashboardNav({ role, mobile = false }: DashboardNavProps) {
 
   if (mobile) {
     return (
-      <div className="relative">
+      <>
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="p-2"
+          aria-label="Меню"
         >
           <Menu className="h-5 w-5" />
         </button>
         
         {isMobileOpen && (
-          <div className="absolute right-0 top-12 z-50 w-48 rounded-md border bg-white p-4 shadow-lg">
-            <NavContent />
-          </div>
+          <>
+            <div 
+              className="fixed inset-0 z-40 bg-black/20" 
+              onClick={() => setIsMobileOpen(false)}
+            />
+            <div className="absolute right-0 top-12 z-50 w-48 rounded-md border bg-white p-4 shadow-lg">
+              <NavContent />
+            </div>
+          </>
         )}
-      </div>
+      </>
     )
   }
 
