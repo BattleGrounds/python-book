@@ -21,12 +21,17 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single()
 
-  // Получаем модули
-  const { data: modules } = await supabase
-    .from('modules')
-    .select('*')
-    .eq('is_published', true)
-    .order('order')
+  // Получаем модули - админы видят все, студенты только опубликованные
+  const { data: modules } = profile?.role === 'admin'
+    ? await supabase
+        .from('modules')
+        .select('*')
+        .order('order')
+    : await supabase
+        .from('modules')
+        .select('*')
+        .eq('is_published', true)
+        .order('order')
 
   // Получаем прогресс пользователя
   const { data: userProgress } = await supabase

@@ -7,12 +7,21 @@ declare global {
   interface Window {
     loadPyodide: any;
     pyodideOutputBuffer?: string;
+    pyodideInputQueue?: string[];
+    pyodideInputResolver?: (value: string) => void;
+    pyodideWaitingForInput?: boolean;
   }
 }
 
 interface RunCodeResult {
   output: string;
   error?: string;
+  waitingForInput?: boolean;
+}
+
+interface RunCodeOptions {
+  stdin?: string;
+  onInputRequest?: () => void;
 }
 
 export function usePyodide() {
@@ -21,6 +30,7 @@ export function usePyodide() {
   const [error, setError] = useState<string | null>(null)
   const [output, setOutput] = useState<string>('')
   const [isRunning, setIsRunning] = useState(false)
+  const [waitingForInput, setWaitingForInput] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -92,17 +102,20 @@ export function usePyodide() {
     }
   }, [])
 
-  const runCode = async (code: string): Promise<RunCodeResult> => {
+  const runCode = async (code: string, options?: RunCodeOptions): Promise<RunCodeResult> => {
     if (!pyodide) {
       return { output: 'Pyodide not loaded yet', error: 'Pyodide not loaded' }
     }
 
     setIsRunning(true)
+    setWaitingForInput(false)
     setOutput('')
 
     try {
-      // Инициализируем буфер вывода
+      // Инициализируем буфер вывода и очередь ввода
       window.pyodideOutputBuffer = ''
+      window.pyodideInputQueue = options?.stdin ? options.stdin.split('\n') : []
+      window.pyodideWaitingForInput = false
 
       // Настраиваем перехват вывода с помощью registerJsModule
       pyodide.registerJsModule("output_module", {
@@ -116,10 +129,33 @@ export function usePyodide() {
         flush: () => {}
       })
 
-      // Выполняем код для настройки stdout/stderr
+      // Настраиваем перехват ввода
+      pyodide.registerJsModule("input_module", {
+        readline: () => {
+          // Если есть данные в очереди, возвращаем их
+          if (window.pyodideInputQueue && window.pyodideInputQueue.length > 0) {
+            const line = window.pyodideInputQueue.shift() || ''
+            return line
+          }
+          
+          // Если очередь пуста, запрашиваем ввод
+          window.pyodideWaitingForInput = true
+          setWaitingForInput(true)
+          
+          if (options?.onInputRequest) {
+            options.onInputRequest()
+          }
+          
+          // Возвращаем пустую строку, если нет данных
+          return ''
+        }
+      })
+
+      // Выполняем код для настройки stdout/stderr/stdin
       await pyodide.runPythonAsync(`
 import sys
 import output_module
+import input_module
 
 class OutputInterceptor:
     def write(self, text):
@@ -127,8 +163,35 @@ class OutputInterceptor:
     def flush(self):
         output_module.flush()
 
+class InputInterceptor:
+    def readline(self):
+        return input_module.readline()
+    def read(self, size=-1):
+        if size == -1:
+            return self.readline()
+        return self.readline()[:size] if size else ""
+    def readlines(self):
+        lines = []
+        while True:
+            line = self.readline()
+            if not line:
+                break
+            lines.append(line)
+        return lines
+
 sys.stdout = OutputInterceptor()
 sys.stderr = OutputInterceptor()
+sys.stdin = InputInterceptor()
+
+# Переопределяем встроенную функцию input()
+def custom_input(prompt=""):
+    if prompt:
+        output_module.write(prompt)
+    return input_module.readline()
+
+# Переопределяем input() через setattr на builtins модуле
+import builtins
+setattr(builtins, 'input', custom_input)
 `)
 
       // Выполняем пользовательский код
@@ -139,6 +202,7 @@ sys.stderr = OutputInterceptor()
       
       setOutput(result)
       setIsRunning(false)
+      setWaitingForInput(false)
       
       return { output: result }
     } catch (err: any) {
@@ -151,11 +215,26 @@ sys.stderr = OutputInterceptor()
       
       setOutput(errorOutput)
       setIsRunning(false)
+      setWaitingForInput(false)
       return { output: errorOutput, error: errorMessage }
     } finally {
-      // Очищаем буфер
+      // Очищаем буферы
       delete window.pyodideOutputBuffer
+      delete window.pyodideInputQueue
+      delete window.pyodideWaitingForInput
       setIsRunning(false)
+      setWaitingForInput(false)
+    }
+  }
+
+  const provideInput = (input: string) => {
+    if (window.pyodideInputQueue !== undefined) {
+      if (!window.pyodideInputQueue) {
+        window.pyodideInputQueue = []
+      }
+      window.pyodideInputQueue.push(input)
+      window.pyodideWaitingForInput = false
+      setWaitingForInput(false)
     }
   }
 
@@ -169,7 +248,9 @@ sys.stderr = OutputInterceptor()
     error,
     output,
     isRunning,
+    waitingForInput,
     runCode,
+    provideInput,
     clearOutput,
   }
 }

@@ -18,12 +18,73 @@ export class PythonCodeChecker {
     const startTime = Date.now()
     
     try {
-      // Сбрасываем вывод
+      // Инициализируем буфер вывода для тестов
+      if (typeof window !== 'undefined') {
+        window.pyodideOutputBuffer = ''
+      }
+
+      // Настраиваем перехват вывода для тестов
+      pyodide.registerJsModule("test_output_module", {
+        write: (text: string) => {
+          if (text !== '\n' && typeof window !== 'undefined' && window.pyodideOutputBuffer !== undefined) {
+            window.pyodideOutputBuffer += text
+          }
+        },
+        flush: () => {}
+      })
+
+      // Настраиваем stdin для тестов - возвращаем пустую строку, чтобы не блокировать выполнение
+      pyodide.registerJsModule("test_input_module", {
+        readline: () => {
+          // Для тестов всегда возвращаем пустую строку, чтобы не запрашивать интерактивный ввод
+          return ''
+        }
+      })
+
+      // Настраиваем вывод для тестов (но позволяем тестам управлять stdin самим)
       await pyodide.runPythonAsync(`
 import sys
-from io import StringIO
-sys.stdout = StringIO()
-sys.stderr = StringIO()
+import test_output_module
+
+class TestOutputInterceptor:
+    def write(self, text):
+        test_output_module.write(text+"\\n")
+    def flush(self):
+        test_output_module.flush()
+
+# Сохраняем оригинальные stdin/stdout для восстановления
+_original_stdout = sys.stdout
+_original_stderr = sys.stderr
+_original_stdin = sys.stdin
+
+# Переопределяем только stdout/stderr для перехвата вывода
+sys.stdout = TestOutputInterceptor()
+sys.stderr = TestOutputInterceptor()
+
+# НЕ переопределяем sys.stdin - позволим тестам самим управлять им
+# Переопределяем input() чтобы он работал с текущим sys.stdin (включая StringIO)
+import builtins
+_original_input = builtins.input
+
+def test_input(prompt=""):
+    if prompt:
+        test_output_module.write(prompt)
+    # Если sys.stdin имеет метод readline (например, StringIO), используем его напрямую
+    if hasattr(sys.stdin, 'readline'):
+        try:
+            line = sys.stdin.readline()
+            # Убираем символ новой строки в конце, если есть
+            return line.rstrip('\\n\\r')
+        except:
+            pass
+    # Иначе используем оригинальный input
+    try:
+        return _original_input(prompt)
+    except:
+        # Если input() не работает (нет данных), возвращаем пустую строку
+        return ""
+
+setattr(builtins, 'input', test_input)
       `)
 
       // Выполняем код студента
@@ -32,20 +93,21 @@ sys.stderr = StringIO()
       // Выполняем тесты
       await pyodide.runPythonAsync(testCode)
 
-      // Получаем вывод
-      const stdout = pyodide.runPython('sys.stdout.getvalue()')
-      const stderr = pyodide.runPython('sys.stderr.getvalue()')
+      // Получаем вывод из буфера
+      const stdout = typeof window !== 'undefined' && window.pyodideOutputBuffer 
+        ? window.pyodideOutputBuffer 
+        : ''
 
       const executionTime = Date.now() - startTime
 
-      const passed = !stderr && stdout && !stdout.includes('❌')
+      const passed = !!(stdout && !stdout.includes('❌') && !stdout.includes('Failed') && stdout.includes('All tests passed'))
       const message = passed ? 'Tests passed' : 'Tests failed'
 
       return {
         passed,
         message,
-        output: stdout || stderr,
-        error: stderr || undefined,
+        output: stdout || undefined,
+        error: undefined,
         executionTime
       }
 
@@ -54,7 +116,9 @@ sys.stderr = StringIO()
       
       let lastOutput = ''
       try {
-        lastOutput = pyodide.runPython('sys.stdout.getvalue()') || ''
+        lastOutput = typeof window !== 'undefined' && window.pyodideOutputBuffer 
+          ? window.pyodideOutputBuffer 
+          : ''
       } catch (e) {}
 
       return {
@@ -63,6 +127,11 @@ sys.stderr = StringIO()
         output: lastOutput,
         error: error.message,
         executionTime
+      }
+    } finally {
+      // Очищаем буфер после тестов
+      if (typeof window !== 'undefined') {
+        delete window.pyodideOutputBuffer
       }
     }
   }

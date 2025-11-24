@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { usePyodide } from '@/app/hooks/use-pyodide'
-import { Play, Square, RotateCcw, Download, Upload } from 'lucide-react'
+import { Play, Square, RotateCcw, Download, Upload, ArrowRight } from 'lucide-react'
 
 // Динамически импортируем Monaco Editor
 const Editor = dynamic(() => import('@monaco-editor/react'), {
@@ -52,14 +52,19 @@ export default function CodeEditor({
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode)
   const [isEditorReady, setIsEditorReady] = useState(false)
+  const [stdin, setStdin] = useState('')
+  const [stdinLines, setStdinLines] = useState<string[]>([])
   const editorRef = useRef<any>(null)
+  const stdinInputRef = useRef<HTMLInputElement>(null)
   
   const {
     loading,
     error,
     output,
     isRunning,
+    waitingForInput,
     runCode,
+    provideInput,
     clearOutput,
   } = usePyodide()
 
@@ -78,11 +83,47 @@ export default function CodeEditor({
   const handleRunCode = async () => {
     console.log('Running code:', code)
     
-    const result = await runCode(code)
+    // Подготавливаем stdin из текстового поля
+    const stdinData = stdin.trim() || stdinLines.join('\n')
+    
+    // Проверяем, есть ли функция solution() в коде
+    const hasSolutionFunction = /def\s+solution\s*\(/.test(code)
+    
+    // Если есть функция solution, добавляем её вызов
+    let codeToRun = code
+    if (hasSolutionFunction) {
+      codeToRun = code + '\n\n# Автоматический вызов solution()\nsolution()'
+    }
+    
+    const result = await runCode(codeToRun, {
+      stdin: stdinData,
+      onInputRequest: () => {
+        // Фокус на поле ввода, если код запрашивает ввод
+        if (stdinInputRef.current) {
+          stdinInputRef.current.focus()
+        }
+      }
+    })
     console.log('Run result:', result)
     
     if (onCodeRun) {
       onCodeRun(result)
+    }
+  }
+
+  const handleStdinSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (stdin.trim() && waitingForInput) {
+      provideInput(stdin.trim())
+      setStdinLines(prev => [...prev, stdin.trim()])
+      setStdin('')
+    }
+  }
+
+  const handleStdinKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && waitingForInput) {
+      e.preventDefault()
+      handleStdinSubmit(e)
     }
   }
 
@@ -94,6 +135,8 @@ export default function CodeEditor({
 
   const handleResetCode = () => {
     setCode(initialCode)
+    setStdin('')
+    setStdinLines([])
     clearOutput()
   }
 
@@ -233,10 +276,59 @@ export default function CodeEditor({
             </pre>
           </div>
 
+          {/* Stdin Input Area */}
+          <div className="border-t border-gray-700 bg-gray-800">
+            <div className="p-3 border-b border-gray-700">
+              <h4 className="text-white font-medium text-sm">Standard Input (stdin)</h4>
+              <p className="text-gray-400 text-xs mt-1">
+                {waitingForInput 
+                  ? 'Code is waiting for input. Enter a value and press Enter.' 
+                  : 'Enter input values (one per line) or leave empty to provide input interactively.'}
+              </p>
+            </div>
+            
+            {waitingForInput ? (
+              <form onSubmit={handleStdinSubmit} className="p-3 flex gap-2">
+                <input
+                  ref={stdinInputRef}
+                  type="text"
+                  value={stdin}
+                  onChange={(e) => setStdin(e.target.value)}
+                  onKeyDown={handleStdinKeyDown}
+                  placeholder="Enter input value..."
+                  className="flex-1 px-3 py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  Send
+                </button>
+              </form>
+            ) : (
+              <div className="p-3">
+                <textarea
+                  value={stdin}
+                  onChange={(e) => setStdin(e.target.value)}
+                  placeholder="Enter input values (one per line)&#10;Example:&#10;5&#10;10&#10;hello"
+                  className="w-full px-3 py-2 bg-gray-900 text-white border border-gray-600 rounded focus:outline-none focus:border-blue-500 font-mono text-sm resize-none"
+                  rows={3}
+                />
+                <p className="text-gray-400 text-xs mt-2">
+                  Each line will be provided as input when your code calls input()
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Status Bar */}
           <div className="px-4 py-2 bg-gray-800 border-t border-gray-700 text-xs text-gray-400 flex justify-between">
             <div>
-              {isRunning ? (
+              {waitingForInput ? (
+                <span className="text-yellow-400">● Waiting for input...</span>
+              ) : isRunning ? (
                 <span className="text-yellow-400">● Running Python code...</span>
               ) : loading ? (
                 <span className="text-blue-400">● Loading Pyodide...</span>
